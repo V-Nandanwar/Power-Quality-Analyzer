@@ -9,6 +9,11 @@ md_to_pdf.py
 # Word duplicates of the Markdown sources
 *.docx
 
+# Academic course-review deliverables (kept locally, not for the public portfolio)
+Midsem_Review_Report.*
+Endsem_Review_Report.*
+*.pptx
+
 # Build artifacts
 Debug/
 Release/

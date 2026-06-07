@@ -51,7 +51,6 @@ Both sensors are galvanically isolated, and the electronics run off separate bat
 | [`ESP_Code/`](ESP_Code/) | ESP8266 firmware (Arduino) — receives UART JSON, hosts the web server. |
 | [`website/`](website/) | Browser dashboard — live values, history charts, alerts, multi-device fleet view. HTML/CSS/JS, Chart.js. |
 | [`Project_Description_and_BOM.md`](Project_Description_and_BOM.md) | Full design writeup, architecture, pinout, and bill of materials. |
-| `Midsem_Review_Report` / `Endsem_Review_Report` | Course review reports documenting design and validation. |
 
 ## Tech stack
 
