@@ -4,6 +4,14 @@ A portable, sub-₹2,500 power quality analyzer built around the **STM32F411 "Bl
 
 Built as an affordable alternative to commercial analyzers (Fluke 435-II, Hioki PQ3198) that cost ₹50,000+. Validated against a calibrated Fluke 117 multimeter — RMS within ±1.6%, frequency within ±0.06%, real power within ±2.2%.
 
+## Demo
+
+The analyzer running on real 230 V mains — live readings on the TFT and the web dashboard updating in real time:
+
+https://github.com/V-Nandanwar/Power-Quality-Analyzer/releases/download/v1.0/Power_Quality_Analyzer.mp4
+
+> If the player above doesn't load, [download / watch the demo here](https://github.com/V-Nandanwar/Power-Quality-Analyzer/releases/download/v1.0/Power_Quality_Analyzer.mp4).
+
 ---
 
 ## What it does
