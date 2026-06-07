@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PQA-01 Power Quality Analyzer</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="topbar">
+    <a href="index.html" class="back-link" title="Back to fleet">&larr; Fleet</a>
+    <div class="nameplate">
+      <div class="nameplate-logo">
+        <span class="logo-mono">PQA</span>
+        <span class="logo-sub" id="nameplate-suffix">01</span>
+      </div>
+      <div class="nameplate-info">
+        <h1 class="nameplate-title" id="nameplate-title">Power Quality Analyzer</h1>
+        <div class="nameplate-meta">
+          <span><span class="k">LOCATION</span><span class="v" id="nameplate-location">—</span></span>
+          <span><span class="k">SERIAL</span><span class="v" id="nameplate-serial">—</span></span>
+          <span><span class="k">FW</span><span class="v" id="nameplate-fw">—</span></span>
+          <span><span class="k">MAINS</span><span class="v">230 V / 50 Hz</span></span>
+          <span><span class="k">f<sub>s</sub></span><span class="v">5 kHz</span></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="statusbar">
+    <div class="led-group">
+      <div class="led" data-state="ok" title="ADC acquisition"><span class="led-dot"></span>ACQ</div>
+      <div class="led" data-state="ok" title="DMA transfer"><span class="led-dot"></span>DMA</div>
+      <div class="led" data-state="ok" title="FFT engine"><span class="led-dot"></span>FFT</div>
+      <div class="led" data-state="ok" id="led-link" title="STM32 &harr; ESP8266 link"><span class="led-dot"></span>LINK</div>
+      <div class="led" id="led-mode" title="Data source mode"><span class="led-dot"></span><span id="mode-text">SIM</span></div>
+    </div>
+    <div class="session-info">
+      <span><span class="k">UPTIME</span><span class="v" id="uptime">00:00:00</span></span>
+      <span><span class="k">PACKETS</span><span class="v" id="pkt-count">0</span></span>
+      <span><span class="k">RATE</span><span class="v" id="pkt-rate">0.0</span> Hz</span>
+      <span><span class="k">BUFFER</span><span class="v" id="buffer-count">0</span></span>
+    </div>
+    <div class="conn-block">
+      <span class="status-pill" id="conn-status" data-state="connecting">
+        <span class="dot"></span>
+        <span class="text">CONNECTING</span>
+      </span>
+      <span class="timestamp" id="last-update">—</span>
+    </div>
+  </section>
+
+  <section class="controls">
+    <div class="control-group" id="scenario-group" hidden>
+      <label for="scenario">Load Profile <span class="sim-badge" id="sim-badge">SIMULATION</span></label>
+      <select id="scenario">
+        <option value="no_load">No Load</option>
+        <option value="resistive" selected>Resistive (incandescent bulb)</option>
+        <option value="inductive">Inductive (motor / fan)</option>
+        <option value="harmonic">Non-linear (TRIAC dimmer)</option>
+        <option value="mixed">Mixed Loads</option>
+        <option value="sag">Voltage Sag Event</option>
+        <option value="swell">Voltage Swell Event</option>
+        <option value="frequency_drift">Frequency Drift</option>
+      </select>
+    </div>
+    <div class="control-group actions">
+      <button id="reset-stats" class="btn btn-ghost" title="Reset min/max tracking">Reset min/max</button>
+      <button id="pause-btn" class="btn btn-ghost">Hold</button>
+      <button id="export-csv" class="btn btn-primary">Export CSV</button>
+    </div>
+  </section>
+
+  <aside class="alert-console" id="alert-console" data-state="nominal" aria-label="Alert console">
+    <div class="console-head">
+      <span class="console-indicator">
+        <span class="console-dot"></span>
+        <span class="console-title" id="console-title">ALL NOMINAL</span>
+      </span>
+      <span class="console-count" id="alerts-count">0</span>
+    </div>
+    <div class="alerts-list" id="alerts-list"></div>
+  </aside>
+
+  <section class="group-title"><span>Measurements</span></section>
+  <section class="kpi-grid">
+    <div class="kpi-card" data-param="v_rms">
+      <div class="kpi-head"><span class="kpi-label">V<sub>rms</sub></span><span class="kpi-unit">V</span></div>
+      <div class="kpi-value" data-role="value">—</div>
+      <div class="kpi-limits" data-role="limits"></div>
+      <div class="kpi-stats">
+        <span><em>MIN</em><b data-role="min">—</b></span>
+        <span><em>MAX</em><b data-role="max">—</b></span>
+        <span><em>AVG</em><b data-role="avg">—</b></span>
+      </div>
+    </div>
+    <div class="kpi-card" data-param="i_rms">
+      <div class="kpi-head"><span class="kpi-label">I<sub>rms</sub></span><span class="kpi-unit">mA</span></div>
+      <div class="kpi-value" data-role="value">—</div>
+      <div class="kpi-limits" data-role="limits"></div>
+      <div class="kpi-stats">
+        <span><em>MIN</em><b data-role="min">—</b></span>
+        <span><em>MAX</em><b data-role="max">—</b></span>
+        <span><em>AVG</em><b data-role="avg">—</b></span>
+      </div>
+    </div>
+    <div class="kpi-card" data-param="freq">
+      <div class="kpi-head"><span class="kpi-label">Frequency</span><span class="kpi-unit">Hz</span></div>
+      <div class="kpi-value" data-role="value">—</div>
+      <div class="kpi-limits" data-role="limits"></div>
+      <div class="kpi-stats">
+        <span><em>MIN</em><b data-role="min">—</b></span>
+        <span><em>MAX</em><b data-role="max">—</b></span>
+        <span><em>AVG</em><b data-role="avg">—</b></span>
+      </div>
+    </div>
+    <div class="kpi-card" data-param="pf">
+      <div class="kpi-head"><span class="kpi-label">Power Factor</span><span class="kpi-unit">cos&phi;</span></div>
+      <div class="kpi-value" data-role="value">—</div>
+      <div class="kpi-limits" data-role="limits"></div>
+      <div class="kpi-stats">
+        <span><em>MIN</em><b data-role="min">—</b></span>
+        <span><em>MAX</em><b data-role="max">—</b></span>
+        <span><em>AVG</em><b data-role="avg">—</b></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="group-title"><span>Power</span></section>
+  <section class="kpi-grid">
+    <div class="kpi-card" data-param="p_real">
+      <div class="kpi-head"><span class="kpi-label">Real Power (P)</span><span class="kpi-unit">W</span></div>
+      <div class="kpi-value" data-role="value">—</div>
+      <div class="kpi-limits" data-role="limits"></div>
+      <div class="kpi-stats">
+        <span><em>MIN</em><b data-role="min">—</b></span>
+        <span><em>MAX</em><b data-role="max">—</b></span>
+        <span><em>AVG</em><b data-role="avg">—</b></span>
+      </div>
+    </div>
+    <div class="kpi-card" data-param="p_app">
+      <div class="kpi-head"><span class="kpi-label">Apparent (S)</span><span class="kpi-unit">VA</span></div>
+      <div class="kpi-value" data-role="value">—</div>
+      <div class="kpi-limits" data-role="limits"></div>
+      <div class="kpi-stats">
+        <span><em>MIN</em><b data-role="min">—</b></span>
+        <span><em>MAX</em><b data-role="max">—</b></span>
+        <span><em>AVG</em><b data-role="avg">—</b></span>
+      </div>
+    </div>
+    <div class="kpi-card" data-param="p_reac">
+      <div class="kpi-head"><span class="kpi-label">Reactive (Q)</span><span class="kpi-unit">VAR</span></div>
+      <div class="kpi-value" data-role="value">—</div>
+      <div class="kpi-limits" data-role="limits"></div>
+      <div class="kpi-stats">
+        <span><em>MIN</em><b data-role="min">—</b></span>
+        <span><em>MAX</em><b data-role="max">—</b></span>
+        <span><em>AVG</em><b data-role="avg">—</b></span>
+      </div>
+    </div>
+    <div class="kpi-card" data-param="thd">
+      <div class="kpi-head"><span class="kpi-label">THD<sub>V</sub></span><span class="kpi-unit">%</span></div>
+      <div class="kpi-value" data-role="value">—</div>
+      <div class="kpi-limits" data-role="limits"></div>
+      <div class="kpi-stats">
+        <span><em>MIN</em><b data-role="min">—</b></span>
+        <span><em>MAX</em><b data-role="max">—</b></span>
+        <span><em>AVG</em><b data-role="avg">—</b></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="group-title"><span>Waveforms &amp; Trends</span></section>
+  <section class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-head">
+        <h3>Voltage &amp; Current</h3>
+        <span class="chart-sub">last 50 samples</span>
+      </div>
+      <div class="chart-wrap"><canvas id="chart-trend"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-head">
+        <h3>Power (P / S / Q)</h3>
+        <span class="chart-sub">last 50 samples</span>
+      </div>
+      <div class="chart-wrap"><canvas id="chart-power"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-head">
+        <h3>Harmonic Spectrum</h3>
+        <span class="chart-sub">fundamental = 100 %</span>
+      </div>
+      <div class="chart-wrap"><canvas id="chart-harmonics"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-head">
+        <h3>Voltage Waveform</h3>
+        <span class="chart-sub">one line cycle, 20 ms</span>
+      </div>
+      <div class="chart-wrap"><canvas id="chart-waveform"></canvas></div>
+    </div>
+  </section>
+
+  <section class="group-title"><span>Alert Thresholds</span></section>
+  <section class="threshold-panel">
+    <p class="section-sub">Limits are enforced on both the STM32 (buzzer &amp; LED) and this dashboard (card highlighting). Changes persist locally via <code>localStorage</code>.</p>
+    <form id="threshold-form" class="threshold-form">
+      <label>V<sub>rms</sub> sag
+        <span class="input-with-unit"><input type="number" id="t-vsag" step="0.1" min="0"><span class="unit">V</span></span>
+      </label>
+      <label>V<sub>rms</sub> swell
+        <span class="input-with-unit"><input type="number" id="t-vswell" step="0.1" min="0"><span class="unit">V</span></span>
+      </label>
+      <label>Min power factor
+        <span class="input-with-unit"><input type="number" id="t-pfmin" step="0.01" min="0" max="1"><span class="unit">cos&phi;</span></span>
+      </label>
+      <label>Max THD
+        <span class="input-with-unit"><input type="number" id="t-thdmax" step="0.1" min="0"><span class="unit">%</span></span>
+      </label>
+      <label>Min frequency
+        <span class="input-with-unit"><input type="number" id="t-fmin" step="0.01" min="0"><span class="unit">Hz</span></span>
+      </label>
+      <label>Max frequency
+        <span class="input-with-unit"><input type="number" id="t-fmax" step="0.01" min="0"><span class="unit">Hz</span></span>
+      </label>
+      <div class="threshold-actions">
+        <button type="submit" class="btn btn-primary">Save thresholds</button>
+        <button type="button" id="t-reset" class="btn btn-ghost">Reset defaults</button>
+        <span id="threshold-status" class="threshold-status"></span>
+      </div>
+    </form>
+  </section>
+
+  <footer class="footer">
+    <span>PQA-01 &middot; Low-Cost STM32-Based Power Quality Analyzer</span>
+    <span>&copy; ESD Semester 6 Course Project</span>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/machines.js"></script>
+  <script src="js/alerts.js"></script>
+  <script src="js/mock.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/datasource.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

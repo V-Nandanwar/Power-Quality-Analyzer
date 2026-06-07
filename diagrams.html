@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Project Diagrams</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Tenorite', 'Aptos', 'Calibri', sans-serif; background: #fff; color: #000; }
+  .page {
+    width: 1100px;
+    margin: 30px auto;
+    padding: 40px 30px;
+    background: #fff;
+    border: 1px solid #ccc;
+  }
+  .page-title {
+    font-size: 26px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  /* Boxes */
+  .box {
+    border: 2px solid #000;
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: bold;
+    background: #fff;
+    display: inline-block;
+    min-width: 180px;
+    margin: 6px 0;
+  }
+  .box-gray { background: #e8e8e8; }
+  .box-light { background: #f5f5f5; }
+  .box-dashed { border-style: dashed; background: #f8f8f8; }
+  .sub { font-weight: normal; font-size: 11px; display: block; }
+  .sub2 { font-weight: normal; font-size: 10px; display: block; color: #333; }
+  .label { font-size: 11px; font-style: italic; color: #333; }
+
+  .fc-terminal {
+    border: 2px solid #000;
+    border-radius: 30px;
+    padding: 8px 30px;
+    font-size: 14px;
+    font-weight: bold;
+    display: inline-block;
+    background: #fff;
+    margin: 6px 0;
+  }
+  .fc-process {
+    border: 2px solid #000;
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: bold;
+    display: inline-block;
+    min-width: 320px;
+    background: #fff;
+    margin: 6px 0;
+  }
+  .fc-diamond {
+    border: 2px solid #000;
+    padding: 12px 20px;
+    font-size: 13px;
+    font-weight: bold;
+    display: inline-block;
+    min-width: 200px;
+    background: #fff;
+    margin: 6px 0;
+    transform: rotate(0deg);
+  }
+
+  .center-col { text-align: center; }
+
+  table.diagram {
+    border-collapse: collapse;
+    margin: 0 auto;
+  }
+  table.diagram td {
+    padding: 4px 10px;
+    vertical-align: middle;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== BLOCK DIAGRAM ==================== -->
+<div class="page">
+  <div class="page-title">Proposed Functional / Block Diagram</div>
+
+  <div style="text-align:center;">
+
+    <div class="box box-gray" style="min-width:260px;">230V AC Mains Supply<span class="sub">(Wall Socket)</span></div>
+    <br>
+    <div class="box">Sensing Cable + 3A Inline Fuse</div>
+    <br>
+
+    <table class="diagram">
+      <tr>
+        <td>
+          <div class="box box-light">ZMPT101B<span class="sub">AC Voltage Sensor</span><span class="sub2">230V &rarr; 0-3.3V (isolated)</span></div>
+        </td>
+        <td style="width:40px;"></td>
+        <td>
+          <div class="box box-light">SCT-013-005 (YHDC)<span class="sub">AC Current Sensor</span><span class="sub2">Clamp-on, 5A/1V (isolated)</span></div>
+        </td>
+      </tr>
+    </table>
+
+    <div class="box box-gray" style="min-width:360px;">STM32F411CEU6 (Black Pill)<span class="sub">ADC + DMA &nbsp;|&nbsp; RMS Calculation &nbsp;|&nbsp; FFT (THD)</span><span class="sub">Power Calculation &nbsp;|&nbsp; Zero-Crossing Detection</span></div>
+    <br>
+
+    <table class="diagram">
+      <tr>
+        <td>
+          <div class="label">SPI</div>
+          <div class="box">1.8" TFT Display<span class="sub">ST7735 (128&times;160)</span><span class="sub2">V, I, P, PF, THD, Waveform</span></div>
+        </td>
+        <td style="width:40px;"></td>
+        <td>
+          <div class="label">UART</div>
+          <div class="box">ESP8266 NodeMCU<span class="sub">WiFi Web Server</span></div>
+          <br>
+          <div class="box box-light">Web Dashboard<span class="sub">Phone / Laptop Browser</span><span class="sub2">Live Data + Graphs + Alerts</span></div>
+        </td>
+      </tr>
+    </table>
+
+    <br>
+    <div class="box box-dashed" style="min-width:380px;">Extension Board (Load Bus)<span class="sub">Laptop Charger &nbsp;|&nbsp; Phone Charger &nbsp;|&nbsp; Incandescent Bulb</span></div>
+
+    <br><br>
+    <div style="border-top: 1px dashed #999; padding-top: 15px;">
+      <div style="font-size:16px;font-weight:bold;margin-bottom:10px;">Power Supply</div>
+      <table class="diagram">
+        <tr>
+          <td>
+            <div class="box box-light" style="min-width:140px;">2&times; 18650 Li-ion<span class="sub">Series = 7.4V</span></div>
+          </td>
+          <td>
+            <div class="box box-light" style="min-width:120px;">AMS1117<span class="sub">3.3V LDO</span></div>
+          </td>
+          <td>
+            <div class="box box-light" style="min-width:140px;margin-bottom:6px;">STM32 (3.3V pin)</div>
+            <div class="box box-light" style="min-width:140px;">ESP8266 (3.3V pin)</div>
+            <span class="sub2" style="display:block;margin-top:4px;">Common GND shared</span>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== FLOWCHART ==================== -->
+<div class="page">
+  <div class="page-title">System Flowchart</div>
+
+  <div style="text-align:center;">
+
+    <div class="fc-terminal">START</div><br>
+
+    <div class="fc-process">Initialize STM32 (GPIO, ADC, DMA, Timer, SPI, UART)</div><br>
+
+    <div class="fc-process">Initialize TFT Display</div><br>
+
+    <div class="fc-process">Start ADC + DMA<span class="sub">Continuous sampling of V and I channels</span></div><br>
+
+    <div class="fc-process" style="background:#f5f5f5;">DMA Buffer Full?<span class="sub">No &rarr; Wait &nbsp; | &nbsp; Yes &rarr; Continue</span></div><br>
+
+    <div class="fc-process">Remove DC Bias from Samples</div><br>
+
+    <div class="fc-process">Calculate RMS Voltage and RMS Current</div><br>
+
+    <div class="fc-process">Detect Zero-Crossings &rarr; Calculate Frequency</div><br>
+
+    <div class="fc-process">Calculate Real Power (avg of V[n] &times; I[n])</div><br>
+
+    <div class="fc-process">Calculate Apparent Power (Vrms &times; Irms)</div><br>
+
+    <div class="fc-process">Calculate Power Factor (Real / Apparent)</div><br>
+
+    <div class="fc-process">Perform FFT (CMSIS-DSP, 256-point) &rarr; Compute THD</div><br>
+
+    <div class="fc-process">Check Thresholds<span class="sub">V sag/swell, low PF, high THD, freq deviation</span></div><br>
+
+    <table class="diagram">
+      <tr>
+        <td><div class="fc-process" style="min-width:150px;width:170px;">Update TFT<br>Display</div></td>
+        <td><div class="fc-process" style="min-width:150px;width:170px;">Send JSON<br>via UART<br>to ESP8266</div></td>
+        <td><div class="fc-process" style="min-width:150px;width:170px;">Trigger<br>Buzzer / LED<span class="sub">(if alert)</span></div></td>
+        <td><div class="fc-process box-gray" style="min-width:150px;width:170px;">Loop Back<br>to ADC<br>Sampling</div></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td><div class="fc-process box-light" style="min-width:150px;width:170px;">ESP8266 Updates<br>Web Dashboard</div></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td><div class="fc-process box-light" style="min-width:150px;width:170px;">Browser Displays<br>Live Data + Graphs</div></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </table>
+
+  </div>
+</div>
+
+</body>
+</html>

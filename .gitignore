@@ -1,0 +1,25 @@
+# Third-party research papers — copyrighted, not for public redistribution
+Research_Papers/
+
+# Internal document-generation scripts (not part of the product)
+generate_doc.py
+generate_ppt_content.py
+md_to_pdf.py
+
+# Word duplicates of the Markdown sources
+*.docx
+
+# Build artifacts
+Debug/
+Release/
+*.elf
+*.bin
+*.hex
+*.o
+*.d
+
+# OS / editor noise
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/

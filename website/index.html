@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PQA Fleet — Power Quality Analyzers</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="page-home">
+
+  <header class="topbar">
+    <div class="nameplate">
+      <div class="nameplate-logo">
+        <span class="logo-mono">PQA</span>
+        <span class="logo-sub">FLEET</span>
+      </div>
+      <div class="nameplate-info">
+        <h1 class="nameplate-title">Power Quality Analyzer Fleet</h1>
+        <div class="nameplate-meta">
+          <span><span class="k">SITES</span><span class="v" id="fleet-count">—</span></span>
+          <span><span class="k">ONLINE</span><span class="v" id="fleet-online">—</span></span>
+          <span><span class="k">ALERTS</span><span class="v" id="fleet-alerts">—</span></span>
+          <span><span class="k">UPTIME</span><span class="v" id="fleet-uptime">00:00:00</span></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="group-title"><span>Monitored Machines</span></section>
+
+  <section class="machine-grid" id="machine-grid">
+    <!-- Cards injected by home.js -->
+  </section>
+
+  <footer class="footer">
+    <span>PQA &middot; Low-Cost STM32-Based Power Quality Analyzer</span>
+    <span>&copy; ESD Semester 6 Course Project</span>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/machines.js"></script>
+  <script src="js/mock.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/datasource.js"></script>
+  <script src="js/home.js"></script>
+</body>
+</html>
